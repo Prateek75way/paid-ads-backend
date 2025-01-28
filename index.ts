@@ -13,6 +13,7 @@ import cors from "cors";
 import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
+import { rateLimiter } from "./app/common/middleware/rate-limitter.middleware";
 
 // Load the environment configuration
 loadConfig();
