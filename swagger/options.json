@@ -1,0 +1,617 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "API documentation for the user-related operations",
+      "version": "1.0.0",
+      "title": "User API"
+    },
+    "host": "localhost:8000",
+    "basePath": "/api",
+    "tags": [
+      {
+        "name": "User",
+        "description": "Operations related to user authentication and management"
+      },
+      {
+        "name": "Ad",
+        "description": "Operations related to advertisements"
+      }
+    ],
+    "paths": {
+      "/users": {
+        "post": {
+          "tags": ["User"],
+          "summary": "Create a new user",
+          "description": "This endpoint allows the creation of a new user.",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "user",
+              "description": "User object that needs to be created",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "User created successfully",
+              "schema": {
+                "$ref": "#/definitions/User"
+              },
+              "examples": {
+                "application/json": {
+                  "name": "John Doe",
+                  "email": "johndoe@example.com",
+                  "role": "USER",
+                  "walletBalance": 0,
+                  "ipAddress": "192.168.1.1",
+                  "createdAt": "2025-01-28T12:00:00Z",
+                  "updatedAt": "2025-01-28T12:00:00Z"
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "examples": {
+                "application/json": {
+                  "error": "Invalid email format"
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": ["User"],
+          "summary": "Get all users",
+          "description": "This endpoint allows an authenticated admin to retrieve all users.",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of users",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "examples": {
+                "application/json": [
+                  {
+                    "name": "John Doe",
+                    "email": "johndoe@example.com",
+                    "role": "USER",
+                    "walletBalance": 0,
+                    "ipAddress": "192.168.1.1",
+                    "createdAt": "2025-01-28T12:00:00Z",
+                    "updatedAt": "2025-01-28T12:00:00Z"
+                  },
+                  {
+                    "name": "Jane Smith",
+                    "email": "janesmith@example.com",
+                    "role": "ADMIN",
+                    "walletBalance": 100,
+                    "ipAddress": "192.168.1.2",
+                    "createdAt": "2025-01-15T12:00:00Z",
+                    "updatedAt": "2025-01-28T12:00:00Z"
+                  }
+                ]
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "examples": {
+                "application/json": {
+                  "error": "Authorization token required"
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "examples": {
+                "application/json": {
+                  "error": "You are not authorized to access this resource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/login": {
+        "post": {
+          "tags": ["User"],
+          "summary": "User login",
+          "description": "This endpoint allows the user to log in using email and password.",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "loginDetails",
+              "description": "User login credentials",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Login"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Login successful",
+              "schema": {
+                "$ref": "#/definitions/LoginResponse"
+              },
+              "examples": {
+                "application/json": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwMzg0YzA4YjU5ZjYzMDA2YWI0ZjEwYyIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzY5NzEyMjAwfQ.Wcb7hSTmre0vDPuy_JUuyq-m8lDg9gyO3fXYjD5Wx-I",
+                  "refreshToken": "d16be82bff847432f9ee1005c9ed859f9e760e8c68d93db44ed4f4505f3a4b2e6f",
+                  "user": {
+                    "name": "John Doe",
+                    "email": "johndoe@example.com",
+                    "role": "USER",
+                    "walletBalance": 0,
+                    "ipAddress": "192.168.1.1",
+                    "createdAt": "2025-01-28T12:00:00Z",
+                    "updatedAt": "2025-01-28T12:00:00Z"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "examples": {
+                "application/json": {
+                  "error": "Invalid email or password"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/refresh": {
+        "post": {
+          "tags": ["User"],
+          "summary": "Refresh user tokens",
+          "description": "This endpoint allows a user to refresh their access token using the refresh token.",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "refreshToken",
+              "description": "Refresh token",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/RefreshToken"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Tokens refreshed successfully",
+              "schema": {
+                "$ref": "#/definitions/LoginResponse"
+              },
+              "examples": {
+                "application/json": {
+                  "accessToken": "newAccessTokenHere",
+                  "refreshToken": "newRefreshTokenHere",
+                  "user": {
+                    "name": "John Doe",
+                    "email": "johndoe@example.com",
+                    "role": "USER",
+                    "walletBalance": 0,
+                    "ipAddress": "192.168.1.1",
+                    "createdAt": "2025-01-28T12:00:00Z",
+                    "updatedAt": "2025-01-28T12:00:00Z"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "examples": {
+                "application/json": {
+                  "error": "Invalid refresh token"
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid or expired refresh token",
+              "examples": {
+                "application/json": {
+                  "error": "Invalid refresh token"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/logout": {
+        "post": {
+          "tags": ["User"],
+          "summary": "User logout",
+          "description": "This endpoint allows the user to log out by clearing their access token.",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Logged out successfully",
+              "examples": {
+                "application/json": {
+                  "message": "Successfully logged out"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "examples": {
+                "application/json": {
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/wallet-balance": {
+        "get": {
+          "tags": ["User"],
+          "summary": "Get wallet balance",
+          "description": "This endpoint allows an authenticated user to fetch their wallet balance.",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Wallet balance fetched successfully",
+              "schema": {
+                "$ref": "#/definitions/WalletBalance"
+              },
+              "examples": {
+                "application/json": {
+                  "walletBalance": 0,
+                  "name": "John Doe"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "examples": {
+                "application/json": {
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/ads": {
+        "post": {
+          "tags": ["Ad"],
+          "summary": "Create an ad",
+          "description": "This endpoint allows an authenticated admin to create a new ad.",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "ad",
+              "description": "Ad object that needs to be created",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Ad"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Ad created successfully",
+              "schema": {
+                "$ref": "#/definitions/Ad"
+              },
+              "examples": {
+                "application/json": {
+                  "title": "Amazing Product",
+                  "description": "Buy our amazing product now!",
+                  "pricePerView": 2.5,
+                  "pricePerClick": 5.0,
+                  "createdBy": "60c72b2f5b1e4a22a03a0a6d",
+                  "redirectUrl": "https://example.com",
+                  "createdAt": "2025-01-28T12:00:00Z"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "examples": {
+                "application/json": {
+                  "error": "Unauthorized"
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "examples": {
+                "application/json": {
+                  "error": "You are not authorized to perform this action"
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": ["Ad"],
+          "summary": "Get all ads",
+          "description": "This endpoint allows an authenticated user to fetch all ads.",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ads fetched successfully",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Ad"
+                }
+              },
+              "examples": {
+                "application/json": [
+                  {
+                    "title": "Amazing Product",
+                    "description": "Buy our amazing product now!",
+                    "pricePerView": 2.5,
+                    "pricePerClick": 5.0,
+                    "createdBy": "60c72b2f5b1e4a22a03a0a6d",
+                    "redirectUrl": "https://example.com",
+                    "createdAt": "2025-01-28T12:00:00Z"
+                  }
+                ]
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "examples": {
+                "application/json": {
+                  "error": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/ads/{id}": {
+        "get": {
+          "tags": ["Ad"],
+          "summary": "Get a specific ad by ID",
+          "description": "This endpoint allows an authenticated user to fetch a specific ad by its ID.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Ad ID"
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ad fetched successfully",
+              "schema": {
+                "$ref": "#/definitions/Ad"
+              },
+              "examples": {
+                "application/json": {
+                  "title": "Amazing Product",
+                  "description": "Buy our amazing product now!",
+                  "pricePerView": 2.5,
+                  "pricePerClick": 5.0,
+                  "createdBy": "60c72b2f5b1e4a22a03a0a6d",
+                  "redirectUrl": "https://example.com",
+                  "createdAt": "2025-01-28T12:00:00Z"
+                }
+              }
+            },
+            "404": {
+              "description": "Ad not found",
+              "examples": {
+                "application/json": {
+                  "error": "Ad not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/interact/": {
+      "post": {
+        "tags": ["Ad"],
+        "summary": "Track ad interaction (view or click)",
+        "description": "This endpoint tracks interactions with ads (views or clicks).",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "interaction",
+            "description": "Ad interaction details",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "adId": {
+                  "type": "string",
+                  "description": "ID of the ad being interacted with"
+                },
+                "interactionType": {
+                  "type": "string",
+                  "enum": ["view", "click"],
+                  "description": "Type of interaction (view or click)"
+                }
+              },
+              "required": ["adId", "interactionType"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ad interaction successfully tracked",
+            "examples": {
+              "application/json": {
+                "message": "Ad interaction (view/click) successfully recorded.",
+                "adId": "60c72b2f5b1e4a22a03a0a6d",
+                "interactionType": "view"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "examples": {
+              "application/json": {
+                "error": "Missing or invalid adId or interactionType"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "Authorization required"
+              }
+            }
+          }
+        }
+      }
+    }
+    },
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["USER", "ADMIN"]
+          },
+          "walletBalance": {
+            "type": "number"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      },
+      "RefreshToken": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "Ad": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "pricePerView": {
+            "type": "number"
+          },
+          "pricePerClick": {
+            "type": "number"
+          },
+          "redirectUrl": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WalletBalance": {
+        "type": "object",
+        "properties": {
+          "walletBalance": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securityDefinitions": {
+      "BearerAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+  
