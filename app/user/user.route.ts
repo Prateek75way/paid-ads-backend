@@ -11,8 +11,8 @@ import { rateLimiter } from "../common/middleware/rate-limitter.middleware";
 const router = Router();
 
 router
-        .post("/", userController.createUser)   
-        .get("/",authenticateUser, // Authenticate the user
+        .post("/", rateLimiter, catchError,userController.createUser)   
+        .get("/", rateLimiter,authenticateUser, // Authenticate the user
                 authorizeRole(["ADMIN"]), userController.getAllUsers)
         .post("/login",rateLimiter, catchError, userController.loginUser)  
         .post("/refresh", rateLimiter,  catchError, userController.refresh) 

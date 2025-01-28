@@ -5,6 +5,7 @@ This is the backend for the Reward View project. The application allows users to
 
 ## Features
 
+- **Unique IP Address**: Each user is unique , with there own IP Address
 - **User Authentication**: Register, log in, and manage user sessions with JWT-based authentication.
 - **User Role Management**: Roles for users and admins, allowing different permissions for each.
 - **Ad Interaction**: Users can interact with ads (view or click), earning rewards based on their actions.
