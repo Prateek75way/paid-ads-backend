@@ -12,6 +12,6 @@ router.post(
   createAd // Handle ad creation
 );
 router.get('/all-ads', authenticateUser, getAdsByUserController);
-router.get("/", authenticateUser, getAds);
+router.get("/", getAds);
 router.get("/:id", fetchAdById);
 export default router;

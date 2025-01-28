@@ -38,7 +38,7 @@ const UserSchema = new mongoose.Schema({
   ipAddress: {
     type: String,
     required: true,
-//     unique: true, // Ensure each user has a unique IP address
+    unique: true, // Ensure each user has a unique IP address
   },
   createdAt: {
     type: Date,
